@@ -66,13 +66,19 @@ function montarTabuleiro()
     posXR, posYR = -15, 50
     for i = 1, 9 do
         for j = 1, 9 do 
-            
-                local rect = newRect(posXR + 35 * j, posYR)
-                rect.id = {i, j}
-                rect:setFillColor(0,0,0)
-                rect:setStrokeColor(1,1,1)
-                rect.strokeWidth = 4
-                criarEventoDeToqueRect(rect)
+            if tabuleiroTela[i][j] ~= "" then
+            local rect = newRect(posXR + 35 * j, posYR)
+            rect.id = {i, j}
+            rect:setFillColor(0,0,0)
+            rect:setStrokeColor(1,1,1)
+            rect.strokeWidth = 4
+            end 
+            local rect = newRect(posXR + 35 * j, posYR)
+            rect.id = {i, j}
+            rect:setFillColor(0,0,0)
+            rect:setStrokeColor(1,1,1)
+            rect.strokeWidth = 4
+            criarEventoDeToqueRect(rect)
 
             gameOverBack = display.newImage("back.png", display.contentCenterX, display.contentCenterY)
             gameOverBack:scale(1.5, 1)
@@ -90,6 +96,7 @@ function mostraNumeros()
         for j = 1, 9 do
 
             -- tabuleiroTela[i][j] = tabuleiroTeste[i][j]
+            -- tabuleiroTela[i][j] = superMatriz[i][j]
             tabuleiroTela[1][1] = superMatriz[i][1]
             tabuleiroTela[1][4] = superMatriz[1][4]
             tabuleiroTela[1][7] = superMatriz[1][7]
@@ -161,30 +168,20 @@ function checkGameOver()
     end
 end
 
-num = 0
-
-function linhaColuna(linha, coluna, numero)
-    if (verificaMatriz(linha, coluna, superMatriz, num)) then
-        tabuleiroTela[linha][coluna] = numero
-        print(tabuleiroTela[linha][coluna])
-        mostraNumeros()
-        return 1
-    end
-    return 0
-end
+num = nil
 
 function selecionarPecaLocal(event)
 
     if (event.phase == "began") then
         click = event.target.id
-
         if (tabuleiroTela[click[1]][click[2]] == "") then
-            
             num = 1
             tabuleiroTela[click[1]][click[2]] =  num
             linhaColuna(click[1], click[2], num)
 
-        elseif (tabuleiroTela[click[1]][click[2]] > 0 and tabuleiroTela[click[1]][click[2]] < 9) then            
+        elseif (tabuleiroTela[click[1]][click[2]] > 0 and
+            
+            tabuleiroTela[click[1]][click[2]] < 9) then
             num = tabuleiroTela[click[1]][click[2]] + 1
             linhaColuna(click[1], click[2], num)
 
@@ -199,7 +196,6 @@ end
 function criarEventoDeToqueRect(rect)
     rect:addEventListener("touch", selecionarPecaLocal)
 end
-
 montarTabuleiro()
 
 function verificaNumeroNaSuperMatriz(linha, coluna, num)
@@ -219,6 +215,16 @@ function verificaNumeroNaSuperMatriz(linha, coluna, num)
     return var;
 end
 
+function linhaColuna(linha, coluna, numero)
+    if (verificaMatriz(linha, coluna, superMatriz, num)) then
+        tabuleiroTela[linha][coluna] = numero
+        print(tabuleiroTela[linha][coluna])
+        mostraNumeros()
+        return 1
+    end
+    return 0
+    
+end
 
 function verificaNilEVazio(tabuleiroTela)
     local contador = 0
@@ -263,3 +269,5 @@ numeroIncorreto:setFillColor(1,0,0)
 
 local numeroIncorreto = display.newText({text = " - Número Incorreto",x = display.contentWidth/2+90,y = 370})
 numeroIncorreto:setFillColor(0,0,0)
+
+
